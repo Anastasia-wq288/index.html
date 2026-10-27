@@ -261,31 +261,44 @@
   });
 
   // ===== Отправка =====
-  submitBtn.addEventListener('click', async () => {
-    // Валидация
-    if (!state.attend) {
-      alert('Пожалуйста, выбери: будешь ты или нет 🙂');
-          const firstName = document.getElementById('firstName').value.trim();
+   submitBtn.addEventListener('click', async () => {
+    // 1) Считываем поля имени/фамилии/группы ПЕРВЫМИ
+    const firstName = document.getElementById('firstName').value.trim();
     const lastName  = document.getElementById('lastName').value.trim();
     const group     = document.getElementById('group').value.trim();
 
+    // 2) Проверяем, что всё заполнено
     if (!firstName || !lastName || !group) {
       alert('Пожалуйста, заполни имя, фамилию и группу');
-      return;
+      // подсветим пустые поля красным
+      if (!firstName) document.getElementById('firstName').style.borderColor = '#ef4444';
+      if (!lastName)  document.getElementById('lastName').style.borderColor  = '#ef4444';
+      if (!group)     document.getElementById('group').style.borderColor     = '#ef4444';
+      return; // дальше не идём — форма не отправится
     }
+    // сбросим подсветку, если всё ок
+    ['firstName','lastName','group'].forEach(id => {
+      document.getElementById(id).style.borderColor = '';
+    });
+
+    // 3) Проверка участия
+    if (!state.attend) {
+      alert('Пожалуйста, выбери: будешь ты или нет 🙂');
       return;
     }
     if (state.attend === 'yes' && !state.days) {
       alert('Выбери количество дней: 1 или 2 суток');
       return;
     }
-    state.firstName = document.getElementById('firstName').value.trim();
-    state.lastName  = document.getElementById('lastName').value.trim();
-    state.group     = document.getElementById('group').value.trim();
-    state.games = document.getElementById('games').value.trim();
-    state.comment = document.getElementById('comment').value.trim();
 
-      // Меняем кнопку, чтобы показать, что идёт отправка
+    // 4) Собираем данные в state
+    state.firstName = firstName;
+    state.lastName  = lastName;
+    state.group     = group;
+    state.games     = document.getElementById('games').value.trim();
+    state.comment   = document.getElementById('comment').value.trim();
+
+    // 5) Отправка
     submitBtn.textContent = 'Отправка...';
     submitBtn.disabled = true;
 
@@ -298,6 +311,21 @@
         },
         body: JSON.stringify(state)
       });
+
+      if (response.ok) {
+        formView.classList.add('hidden');
+        successView.classList.remove('hidden');
+      } else {
+        alert('Ошибка отправки. Попробуй ещё раз.');
+        submitBtn.textContent = 'Отправить ответ';
+        submitBtn.disabled = false;
+      }
+    } catch (error) {
+      alert('Ошибка сети. Проверь интернет.');
+      submitBtn.textContent = 'Отправить ответ';
+      submitBtn.disabled = false;
+    }
+  });
 
       if (response.ok) {
         formView.classList.add('hidden');
