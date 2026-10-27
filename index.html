@@ -143,23 +143,25 @@
         <button type="button" class="btn no" data-attend="no">❌ Не буду</button>
       </div>
     </div>
-      <!-- Имя -->
-      <div class="section">
-        <div class="section-title">Имя</div>
-        <input type="text" id="firstName" placeholder="Например: Анастасия">
-      </div>
 
-      <!-- Фамилия -->
-      <div class="section">
-        <div class="section-title">Фамилия</div>
-        <input type="text" id="lastName" placeholder="Например: Иванова">
-      </div>
+    <!-- Имя -->
+    <div class="section">
+      <div class="section-title">Имя</div>
+      <input type="text" id="firstName" placeholder="Например: Анастасия">
+    </div>
 
-      <!-- Группа -->
-      <div class="section">
-        <div class="section-title">Группа</div>
-        <input type="text" id="group" placeholder="Например: ИС-21">
-      </div>
+    <!-- Фамилия -->
+    <div class="section">
+      <div class="section-title">Фамилия</div>
+      <input type="text" id="lastName" placeholder="Например: Иванова">
+    </div>
+
+    <!-- Группа -->
+    <div class="section">
+      <div class="section-title">Группа</div>
+      <input type="text" id="group" placeholder="Например: 02481">
+    </div>
+
     <!-- Детали (показываются только если "Буду") -->
     <div id="details" class="hidden">
       <!-- Количество дней -->
@@ -207,7 +209,7 @@
 
 <script>
   // ===== Состояние =====
-    const state = {
+  const state = {
     attend: null,
     firstName: '',
     lastName: '',
@@ -235,7 +237,6 @@
         details.classList.remove('hidden');
       } else {
         details.classList.add('hidden');
-        // сброс деталей, если передумал
         state.days = null;
         document.querySelectorAll('[data-days]').forEach(b => b.classList.remove('selected'));
       }
@@ -261,27 +262,22 @@
   });
 
   // ===== Отправка =====
-   submitBtn.addEventListener('click', async () => {
-    // 1) Считываем поля имени/фамилии/группы ПЕРВЫМИ
+  submitBtn.addEventListener('click', async () => {
     const firstName = document.getElementById('firstName').value.trim();
     const lastName  = document.getElementById('lastName').value.trim();
     const group     = document.getElementById('group').value.trim();
 
-    // 2) Проверяем, что всё заполнено
     if (!firstName || !lastName || !group) {
       alert('Пожалуйста, заполни имя, фамилию и группу');
-      // подсветим пустые поля красным
       if (!firstName) document.getElementById('firstName').style.borderColor = '#ef4444';
       if (!lastName)  document.getElementById('lastName').style.borderColor  = '#ef4444';
       if (!group)     document.getElementById('group').style.borderColor     = '#ef4444';
-      return; // дальше не идём — форма не отправится
+      return;
     }
-    // сбросим подсветку, если всё ок
     ['firstName','lastName','group'].forEach(id => {
       document.getElementById(id).style.borderColor = '';
     });
 
-    // 3) Проверка участия
     if (!state.attend) {
       alert('Пожалуйста, выбери: будешь ты или нет 🙂');
       return;
@@ -291,14 +287,12 @@
       return;
     }
 
-    // 4) Собираем данные в state
     state.firstName = firstName;
     state.lastName  = lastName;
     state.group     = group;
     state.games     = document.getElementById('games').value.trim();
     state.comment   = document.getElementById('comment').value.trim();
 
-    // 5) Отправка
     submitBtn.textContent = 'Отправка...';
     submitBtn.disabled = true;
 
@@ -325,25 +319,6 @@
       submitBtn.textContent = 'Отправить ответ';
       submitBtn.disabled = false;
     }
-  });
-
-      if (response.ok) {
-        formView.classList.add('hidden');
-        successView.classList.remove('hidden');
-      } else {
-        alert('Ошибка отправки. Попробуй ещё раз.');
-        submitBtn.textContent = 'Отправить ответ';
-        submitBtn.disabled = false;
-      }
-    } catch (error) {
-      alert('Ошибка сети. Проверь интернет.');
-      submitBtn.textContent = 'Отправить ответ';
-      submitBtn.disabled = false;
-    }
-
-    // Показать экран успеха
-    formView.classList.add('hidden');
-    successView.classList.remove('hidden');
   });
 </script>
 </body>
