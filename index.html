@@ -143,7 +143,23 @@
         <button type="button" class="btn no" data-attend="no">❌ Не буду</button>
       </div>
     </div>
+      <!-- Имя -->
+      <div class="section">
+        <div class="section-title">Имя</div>
+        <input type="text" id="firstName" placeholder="Например: Анастасия">
+      </div>
 
+      <!-- Фамилия -->
+      <div class="section">
+        <div class="section-title">Фамилия</div>
+        <input type="text" id="lastName" placeholder="Например: Иванова">
+      </div>
+
+      <!-- Группа -->
+      <div class="section">
+        <div class="section-title">Группа</div>
+        <input type="text" id="group" placeholder="Например: ИС-21">
+      </div>
     <!-- Детали (показываются только если "Буду") -->
     <div id="details" class="hidden">
       <!-- Количество дней -->
@@ -191,9 +207,12 @@
 
 <script>
   // ===== Состояние =====
-  const state = {
-    attend: null,     // 'yes' | 'no'
-    days: null,       // 1 | 2
+    const state = {
+    attend: null,
+    firstName: '',
+    lastName: '',
+    group: '',
+    days: null,
     games: '',
     food: [],
     comment: ''
@@ -246,13 +265,23 @@
     // Валидация
     if (!state.attend) {
       alert('Пожалуйста, выбери: будешь ты или нет 🙂');
+          const firstName = document.getElementById('firstName').value.trim();
+    const lastName  = document.getElementById('lastName').value.trim();
+    const group     = document.getElementById('group').value.trim();
+
+    if (!firstName || !lastName || !group) {
+      alert('Пожалуйста, заполни имя, фамилию и группу');
+      return;
+    }
       return;
     }
     if (state.attend === 'yes' && !state.days) {
       alert('Выбери количество дней: 1 или 2 суток');
       return;
     }
-
+    state.firstName = document.getElementById('firstName').value.trim();
+    state.lastName  = document.getElementById('lastName').value.trim();
+    state.group     = document.getElementById('group').value.trim();
     state.games = document.getElementById('games').value.trim();
     state.comment = document.getElementById('comment').value.trim();
 
