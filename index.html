@@ -256,21 +256,33 @@
     state.games = document.getElementById('games').value.trim();
     state.comment = document.getElementById('comment').value.trim();
 
-    // ===== ТУТ отправка на сервер =====
-    // Пример с Google Forms / Formspree / своим API:
-    //
-    // await fetch('https://formspree.io/f/XXXXXX', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify(state)
-    // });
-    //
-    // А пока сохраняем в localStorage для демо:
-    const answers = JSON.parse(localStorage.getItem('invite_answers') || '[]');
-    answers.push({ ...state, time: new Date().toISOString() });
-    localStorage.setItem('invite_answers', JSON.stringify(answers));
+      // Меняем кнопку, чтобы показать, что идёт отправка
+    submitBtn.textContent = 'Отправка...';
+    submitBtn.disabled = true;
 
-    console.log('Ответ сохранён:', state);
+    try {
+      const response = await fetch('https://formspree.io/f/xnppprlr', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(state)
+      });
+
+      if (response.ok) {
+        formView.classList.add('hidden');
+        successView.classList.remove('hidden');
+      } else {
+        alert('Ошибка отправки. Попробуй ещё раз.');
+        submitBtn.textContent = 'Отправить ответ';
+        submitBtn.disabled = false;
+      }
+    } catch (error) {
+      alert('Ошибка сети. Проверь интернет.');
+      submitBtn.textContent = 'Отправить ответ';
+      submitBtn.disabled = false;
+    }
 
     // Показать экран успеха
     formView.classList.add('hidden');
